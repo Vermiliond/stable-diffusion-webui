@@ -8,7 +8,6 @@ from modules import paths, shared
 
 extensions = []
 extensions_dir = os.path.join(paths.script_path, "extensions")
-extensions_builtin_dir = os.path.join(paths.script_path, "extensions-builtin")
 
 
 def active():
@@ -16,13 +15,12 @@ def active():
 
 
 class Extension:
-    def __init__(self, name, path, enabled=True, is_builtin=False):
+    def __init__(self, name, path, enabled=True):
         self.name = name
         self.path = path
         self.enabled = enabled
         self.status = ''
         self.can_update = False
-        self.is_builtin = is_builtin
 
         repo = None
         try:
@@ -81,19 +79,11 @@ def list_extensions():
     if not os.path.isdir(extensions_dir):
         return
 
-    paths = []
-    for dirname in [extensions_dir, extensions_builtin_dir]:
-        if not os.path.isdir(dirname):
-            return
+    for dirname in sorted(os.listdir(extensions_dir)):
+        path = os.path.join(extensions_dir, dirname)
+        if not os.path.isdir(path):
+            continue
 
-        for extension_dirname in sorted(os.listdir(dirname)):
-            path = os.path.join(dirname, extension_dirname)
-            if not os.path.isdir(path):
-                continue
-
-            paths.append((extension_dirname, path, dirname == extensions_builtin_dir))
-
-    for dirname, path, is_builtin in paths:
-        extension = Extension(name=dirname, path=path, enabled=dirname not in shared.opts.disabled_extensions, is_builtin=is_builtin)
+        extension = Extension(name=dirname, path=path, enabled=dirname not in shared.opts.disabled_extensions)
         extensions.append(extension)
 

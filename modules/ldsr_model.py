@@ -5,8 +5,8 @@ import traceback
 from basicsr.utils.download_util import load_file_from_url
 
 from modules.upscaler import Upscaler, UpscalerData
-from ldsr_model_arch import LDSR
-from modules import shared, script_callbacks
+from modules.ldsr_model_arch import LDSR
+from modules import shared
 
 
 class UpscalerLDSR(Upscaler):
@@ -52,12 +52,3 @@ class UpscalerLDSR(Upscaler):
             return img
         ddim_steps = shared.opts.ldsr_steps
         return ldsr.super_resolution(img, ddim_steps, self.scale)
-
-
-def on_ui_settings():
-    import gradio as gr
-
-    shared.opts.add_option("ldsr_steps", shared.OptionInfo(100, "LDSR processing steps. Lower = faster", gr.Slider, {"minimum": 1, "maximum": 200, "step": 1}, section=('upscaling', "Upscaling")))
-
-
-script_callbacks.on_ui_settings(on_ui_settings)
