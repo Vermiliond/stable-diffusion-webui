@@ -99,15 +99,11 @@ class UpscalerSwinIR(Upscaler):
 def upscale(
         img,
         model,
-        tile=None,
-        tile_overlap=None,
+        tile=opts.SWIN_tile,
+        tile_overlap=opts.SWIN_tile_overlap,
         window_size=8,
         scale=4,
 ):
-    tile = tile or opts.SWIN_tile
-    tile_overlap = tile_overlap or opts.SWIN_tile_overlap
-
-
     img = np.array(img)
     img = img[:, :, ::-1]
     img = np.moveaxis(img, 2, 0) / 255
